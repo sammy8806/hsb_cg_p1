@@ -1,2 +1,7 @@
 *.user
 *.o
+.qmake.stash
+moc_*
+ui_*
+cg_p1
+
