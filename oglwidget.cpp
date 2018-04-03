@@ -156,9 +156,9 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
     glRotated( alpha, rotateX, rotateY, rotateZ);     // continuous rotation
 
     alpha += 5;
-    rotateX += 3;
-    rotateY += 2;
-    rotateZ += 5;
+    rotateX = 9;
+    rotateY = 2;
+    rotateZ = 5;
 
     // define color: 1=front, 2=back, 3=both, followed by r, g, and b
     SetMaterialColor( 1, 1.0, .2, .2);  // front color is red
@@ -174,8 +174,8 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
 
 void OGLWidget::drawObject(QVector<Vertex> vertices, QVector<Triangle> shape)
 {
-    glBegin(GL_TRIANGLES);
-    //glBegin(GL_QUADS);
+    //glBegin(GL_TRIANGLES);
+    glBegin(GL_QUADS);
     float normal[3];
 
     for(int i=0; i<shape.length(); i++) {
