@@ -48,7 +48,7 @@ void MainWindow::readData(QString filename)
                 emit addQuadFace(parts.at(1).toFloat(), parts.at(2).toFloat(), parts.at(3).toFloat(), parts.at(4).toFloat());
         } else {
             qDebug() << "Unexpected entry type " + parts.at(0);
-            assert(false);
+            assert("Unexpected entry type");
         }
 
     }

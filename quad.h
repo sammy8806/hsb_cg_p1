@@ -6,7 +6,6 @@ class Quad
 {
 public:
     int vertexIndex[4];
-    QVector<Quad> neighbours[4];
 
     Quad();
     Quad( float[4]);
