@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -7,7 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(this, &MainWindow::lineRead, ui->glwidget, &OGLWidget::lineRead);
+    connect(this, &MainWindow::addVertex, ui->glwidget, &OGLWidget::addVertex);
+    connect(this, &MainWindow::addTriFace, ui->glwidget, &OGLWidget::addTriFace);
+    connect(this, &MainWindow::addQuadFace, ui->glwidget, &OGLWidget::addQuadFace);
 
 }
 
@@ -28,12 +31,25 @@ void MainWindow::readData(QString filename)
     }
 
     QString key;
-    float x, y, z;
+    float x, y, z, a;
 
     QTextStream in(this->objFile);
     while(!in.atEnd()) {
-        in >> key >> x >> y >> z;
-        emit lineRead(key, x, y, z);
+        QString line = in.readLine();
+	QStringList parts = line.split(QRegExp("\\s+"));
+	if(parts.length() == 0) continue;
+	if(parts.at(0) == "v") {
+        	emit addVertex(parts.at(1).toFloat(), parts.at(2).toFloat(), parts.at(3).toFloat());
+	} else if(parts.at(0) == "f") {
+		// Add trieforc^W triface
+        	emit addTriFace(parts.at(1).toFloat(), parts.at(2).toFloat(), parts.at(3).toFloat());
+	} else if(parts.at(0) == "q") {
+        	emit addQuadFace(parts.at(1).toFloat(), parts.at(2).toFloat(), parts.at(3).toFloat(), parts.at(4).toFloat());
+	} else {
+		qDebug() << "Unexpected entry type " + parts.at(0);
+		assert(false);
+	}
+
     }
 
     objFile->close();

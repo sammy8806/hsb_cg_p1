@@ -124,16 +124,29 @@ void OGLWidget::stepAnimation()
     update();      // Trigger redraw of scene with paintGL
 }
 
-void OGLWidget::lineRead(QString key, float x, float y, float z)
+void OGLWidget::addVertex(float x, float y, float z) {
+        this->vertices.push_back(Vertex(x, y, z));
+}
+
+// TODO: implement
+void OGLWidget::addTriFace(float x, float y, float z) {
+}
+
+// TODO: implement
+void OGLWidget::addQuadFace(float x, float y, float z, float a) {
+        this->quads.push_back(Quad((int)--x, (int)--y, (int)--z, (int)--a));
+}
+/*
+void OGLWidget::lineRead(QString key, float x, float y, float z, float a)
 {
     qDebug() << "OGL::lineRead: " << key;
     if(key == "v") {
         this->vertices.push_back(Vertex(x, y, z));
     } else if(key == "f") {
-        this->triangles.push_back(Triangle(--x, --y, --z));
+        this->quads.push_back(Quad((int)--x, (int)--y, (int)--z, (int)--a));
     }
 }
-
+*/
 void OGLWidget::initializeGL() // initializations to be called once
 {
     initializeOpenGLFunctions();
@@ -166,13 +179,13 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
 
     // draw a cylinder with default resolution
     // DrawCylinder();
-    drawObject(this->vertices, this->triangles);
+    drawObject(this->vertices, this->quads);
 
     // make it appear (before this, it's hidden in the rear buffer)
     glFlush();
 }
 
-void OGLWidget::drawObject(QVector<Vertex> vertices, QVector<Triangle> shape)
+void OGLWidget::drawObject(QVector<Vertex> vertices, QVector<Quad> shape)
 {
     //glBegin(GL_TRIANGLES);
     glBegin(GL_QUADS);
@@ -186,7 +199,7 @@ void OGLWidget::drawObject(QVector<Vertex> vertices, QVector<Triangle> shape)
         );
         glNormal3fv(normal);
 
-        for(int j=0; j<3; j++) {
+        for(int j=0; j<4; j++) {
             glVertex3fv(vertices.at(shape[i].vertexIndex[j]).vertexCoord);
         }
     }

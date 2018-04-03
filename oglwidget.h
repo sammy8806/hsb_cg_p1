@@ -1,7 +1,7 @@
 #ifndef OGLWIDGET_H
 #define OGLWIDGET_H
 
-#include "triangle.h"
+#include "quad.h"
 #include "vertex.h"
 
 #include <QOpenGLWidget>
@@ -21,7 +21,10 @@ public:
 
 public slots:
     void stepAnimation();
-    void lineRead(QString key, float x, float y, float z);
+    void addVertex(float x, float y, float z);
+    void addTriFace(float x, float y, float z);
+    void addQuadFace(float x, float y, float z, float a);
+//    void lineRead(QString key, float x, float y, float z);
 
 
 protected:
@@ -29,14 +32,14 @@ protected:
     void resizeGL(int w, int h);
     void paintGL();
 
-    void drawObject(QVector<Vertex> vertices, QVector<Triangle> shape);
+    void drawObject(QVector<Vertex> vertices, QVector<Quad> shape);
 
 protected:
     QTimer* animtimer; // Timer needed to step animation every x msec
     int animstep;      // Current animation step (used to rotate triangle
 
 private:
-    QVector<Triangle> triangles;
+    QVector<Quad> quads;
     QVector<Vertex> vertices;
 
     void cross(float c[3], float const a[3], float const b[3]);

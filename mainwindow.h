@@ -30,7 +30,10 @@ private slots:
     void on_pushButton_clicked();
 
 signals:
-    void lineRead(QString, float, float, float);
+//    void lineRead(QString, float, float, float);
+    void addVertex(float, float, float);
+    void addTriFace(float, float, float);
+    void addQuadFace(float, float, float, float);
 
 private:
     Ui::MainWindow *ui;

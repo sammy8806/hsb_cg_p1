@@ -6,7 +6,7 @@ class Triangle
 {
 public:
     float vertexIndex[3];//vertex indices
-    int neighbours[3];//adjacent triangles
+//    int neighbours[3];//adjacent triangles
     int edgeVertices [3];//edge vertex ind
 
     Triangle();
