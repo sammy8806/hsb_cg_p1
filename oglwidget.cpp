@@ -124,29 +124,24 @@ void OGLWidget::stepAnimation()
     update();      // Trigger redraw of scene with paintGL
 }
 
+void OGLWidget::cleanObjects() {
+    this->vertices.clear();
+    this->tries.clear();
+    this->quads.clear();
+}
+
+void OGLWidget::addTriFace(int a, int b, int c) {
+        this->tries.push_back(Triangle(--a, --b, --c));
+}
+
+void OGLWidget::addQuadFace(int a, int b, int c, int d) {
+    this->quads.push_back(Quad(--a, --b, --c, --d));
+}
+
 void OGLWidget::addVertex(float x, float y, float z) {
-        this->vertices.push_back(Vertex(x, y, z));
+    this->vertices.push_back(Vertex(x, y, z));
 }
 
-// TODO: implement
-void OGLWidget::addTriFace(float x, float y, float z) {
-}
-
-// TODO: implement
-void OGLWidget::addQuadFace(float x, float y, float z, float a) {
-        this->quads.push_back(Quad((int)--x, (int)--y, (int)--z, (int)--a));
-}
-/*
-void OGLWidget::lineRead(QString key, float x, float y, float z, float a)
-{
-    qDebug() << "OGL::lineRead: " << key;
-    if(key == "v") {
-        this->vertices.push_back(Vertex(x, y, z));
-    } else if(key == "f") {
-        this->quads.push_back(Quad((int)--x, (int)--y, (int)--z, (int)--a));
-    }
-}
-*/
 void OGLWidget::initializeGL() // initializations to be called once
 {
     initializeOpenGLFunctions();
@@ -179,32 +174,14 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
 
     // draw a cylinder with default resolution
     // DrawCylinder();
-    drawObject(this->vertices, this->quads);
+    if(this->quads.length() > 0)
+        drawObject(this->vertices, this->quads, 4);
+
+    if(this->tries.length() > 0)
+        drawObject(this->vertices, this->tries, 3);
 
     // make it appear (before this, it's hidden in the rear buffer)
     glFlush();
-}
-
-void OGLWidget::drawObject(QVector<Vertex> vertices, QVector<Quad> shape)
-{
-    //glBegin(GL_TRIANGLES);
-    glBegin(GL_QUADS);
-    float normal[3];
-
-    for(int i=0; i<shape.length(); i++) {
-        this->cross(
-                    normal,
-                    vertices.at(shape[i].vertexIndex[0]).vertexCoord,
-                    vertices.at(shape[i].vertexIndex[1]).vertexCoord
-        );
-        glNormal3fv(normal);
-
-        for(int j=0; j<4; j++) {
-            glVertex3fv(vertices.at(shape[i].vertexIndex[j]).vertexCoord);
-        }
-    }
-
-    glEnd();
 }
 
 void OGLWidget::cross(float c[3], const float a[], const float b[])

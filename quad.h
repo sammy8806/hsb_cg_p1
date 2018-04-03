@@ -5,9 +5,8 @@
 class Quad
 {
 public:
-    int vertexIndex[4];//vertex indices
-//    int neighbours[3];//adjacent triangles
-//    int edgeVertices [3];//edge vertex ind
+    int vertexIndex[4];
+    QVector<Quad> neighbours[4];
 
     Quad();
     Quad( float[4]);
