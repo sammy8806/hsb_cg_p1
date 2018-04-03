@@ -7,15 +7,17 @@
 #define PI 3.14159265358979323846
 using namespace std;
 
-static double alpha = 45.0; // rotation angle
-
+static double alpha = 35.0; // rotation angle
+static double rotateY = 0;
+static double rotateX = 0;
+static double rotateZ = 0;
 
 // initialize Open GL lighting and projection matrix
 void InitLightingAndProjection() // to be executed once before drawing
 {
     // light positions and colors
-    GLfloat LightPosition1[4] = { 10, 5, 10,  0};
-    GLfloat LightPosition2[4] = { -5, 5, -10,  0};
+    GLfloat LightPosition1[4] = { 15, 10, 15,  0};
+    GLfloat LightPosition2[4] = { -15, 10, -15,  0};
     GLfloat ColorRedish[4] = { 1.0,  .8,  .8,  1}; // white with a little bit of red
     GLfloat ColorBlueish[4] = { .8,  .8,  1.0,  1};// white with a little bit of blue
 
@@ -42,7 +44,7 @@ void InitLightingAndProjection() // to be executed once before drawing
 
     glMatrixMode( GL_PROJECTION); // define camera projection
     glLoadIdentity(); // reset matrix to identity (otherwise existing matrix will be multiplied with)
-    glOrtho( -30, 30, -50, 50, -80, 80); // orthogonal projection (xmin xmax ymin ymax zmin zmax)
+    glOrtho( -100, 100, -100, 100, -60, 60); // orthogonal projection (xmin xmax ymin ymax zmin zmax)
     //glFrustum( -10, 10, -8, 8, 2, 20); // perspective projektion
 }
 
@@ -151,8 +153,12 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
     glLoadIdentity();				// Reset The Current Modelview Matrix
     glTranslated( 0 ,0 ,-10.0);     // Move 10 units backwards in z, since camera is at origin
     glScaled( 5.0, 5.0, 5.0);       // scale objects
-    glRotated( alpha, 0, 3, 1);     // continuous rotation
+    glRotated( alpha, rotateX, rotateY, rotateZ);     // continuous rotation
+
     alpha += 5;
+    rotateX += 3;
+    rotateY += 2;
+    rotateZ += 5;
 
     // define color: 1=front, 2=back, 3=both, followed by r, g, and b
     SetMaterialColor( 1, 1.0, .2, .2);  // front color is red
@@ -169,6 +175,7 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
 void OGLWidget::drawObject(QVector<Vertex> vertices, QVector<Triangle> shape)
 {
     glBegin(GL_TRIANGLES);
+    //glBegin(GL_QUADS);
     float normal[3];
 
     for(int i=0; i<shape.length(); i++) {
