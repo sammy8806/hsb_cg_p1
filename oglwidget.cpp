@@ -44,7 +44,7 @@ void InitLightingAndProjection() // to be executed once before drawing
 
     glMatrixMode( GL_PROJECTION); // define camera projection
     glLoadIdentity(); // reset matrix to identity (otherwise existing matrix will be multiplied with)
-    glOrtho( -100, 100, -100, 100, -60, 60); // orthogonal projection (xmin xmax ymin ymax zmin zmax)
+    glOrtho( -15, 15, -10, 10, -60, 60); // orthogonal projection (xmin xmax ymin ymax zmin zmax)
     //glFrustum( -10, 10, -8, 8, 2, 20); // perspective projektion
 }
 
@@ -176,8 +176,7 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
     // DrawCylinder();
     if(this->quads.length() > 0)
         drawObject(this->vertices, this->quads, 4);
-
-    if(this->tries.length() > 0)
+    else if(this->tries.length() > 0)
         drawObject(this->vertices, this->tries, 3);
 
     // make it appear (before this, it's hidden in the rear buffer)

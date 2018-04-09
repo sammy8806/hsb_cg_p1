@@ -32,6 +32,13 @@ protected:
     void resizeGL(int w, int h);
     void paintGL();
 
+    void normalize(float v[3]) {
+        float d = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+        v[0] /= d;
+        v[1] /= d;
+        v[2] /= d;
+    }
+
     template<typename T>
     void drawObject(QVector<Vertex> vertices, QVector<T> shape, int elements)
     {
@@ -44,10 +51,26 @@ protected:
         float normal[3];
 
         for(int i=0; i<shape.length(); i++) {
-            this->cross(normal,
-                        vertices.at(shape[i].vertexIndex[0]).vertexCoord,
-                        vertices.at(shape[i].vertexIndex[1]).vertexCoord
-            );
+            if(elements == 3) {
+                this->cross(normal,
+                            vertices.at(shape[i].vertexIndex[0]).vertexCoord,
+                            vertices.at(shape[i].vertexIndex[1]).vertexCoord
+                );
+            }
+
+            if(elements == 4) {
+                float d1[3], d2[3];
+                for (int k = 0; k < 3; k++) {
+                    // p1 - p0
+                    d1[k] = vertices.at(shape[i].vertexIndex[1]).vertexCoord [k] - vertices.at(shape[i].vertexIndex[0]).vertexCoord [k] ;
+                    // p2 - p0
+                    d2[k] = vertices.at(shape[i].vertexIndex[2]).vertexCoord [k] - vertices.at(shape[i].vertexIndex[0]).vertexCoord [k] ;
+                }
+
+                this->cross(normal, d1, d2);
+                this->normalize(normal);
+            }
+
             glNormal3fv(normal);
 
             for(int j=0; j<elements; j++) {
