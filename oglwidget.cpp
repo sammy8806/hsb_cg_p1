@@ -132,6 +132,7 @@ void OGLWidget::updateFinished()
 {
     qDebug() << "Update finished !";
     this->CalculateValences();
+    this->CalculateAllNeighbours();
 }
 
 void OGLWidget::addTriFace(int a, int b, int c) {
@@ -233,5 +234,12 @@ void OGLWidget::CalculateValences(){
 
             this->vertices.at(vertex)->SetValenceCount(edges.size());
         }
+    }
+}
+
+void OGLWidget::CalculateAllNeighbours()
+{
+    for(int face = 0; face < this->quads.length(); face++) {
+
     }
 }
