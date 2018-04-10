@@ -7,13 +7,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+/*
     connect(this, &MainWindow::cleanObjects, ui->glwidget, &OGLWidget::cleanObjects);
     connect(this, &MainWindow::updateFinished, ui->glwidget, &OGLWidget::updateFinished);
     connect(this, &MainWindow::addVertex, ui->glwidget, &OGLWidget::addVertex);
     connect(this, &MainWindow::addTriFace, ui->glwidget, &OGLWidget::addTriFace);
     connect(this, &MainWindow::addQuadFace, ui->glwidget, &OGLWidget::addQuadFace);
-
+*/
 }
 
 MainWindow::~MainWindow()
@@ -41,12 +41,12 @@ void MainWindow::readData(QString filename)
             continue;
 
         if(parts.at(0) == "v") {
-                emit addVertex(parts.at(1).toFloat(), parts.at(2).toFloat(), parts.at(3).toFloat());
+                ui->glwidget->addVertex(parts.at(1).toFloat(), parts.at(2).toFloat(), parts.at(3).toFloat());
         } else if(parts.at(0) == "f" && parts.length() == 4) {
             // Add trieforc^W triface
-                emit addTriFace(parts.at(1).toFloat(), parts.at(2).toFloat(), parts.at(3).toFloat());
+                ui->glwidget->addTriFace(parts.at(1).toFloat(), parts.at(2).toFloat(), parts.at(3).toFloat());
         } else if(parts.at(0) == "f" && parts.length() == 5) {
-                emit addQuadFace(parts.at(1).toFloat(), parts.at(2).toFloat(), parts.at(3).toFloat(), parts.at(4).toFloat());
+                ui->glwidget->addQuadFace(parts.at(1).toFloat(), parts.at(2).toFloat(), parts.at(3).toFloat(), parts.at(4).toFloat());
         } else {
             qDebug() << "Unexpected entry type " + parts.at(0);
             assert("Unexpected entry type");
@@ -56,7 +56,7 @@ void MainWindow::readData(QString filename)
 
     objFile->close();
 
-    emit updateFinished();
+    ui->glwidget->updateFinished();
 }
 
 void MainWindow::on_actionLoad_obj_File_triggered()

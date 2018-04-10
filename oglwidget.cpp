@@ -140,7 +140,6 @@ void OGLWidget::addTriFace(int a, int b, int c) {
 
 void OGLWidget::addQuadFace(int a, int b, int c, int d) {
     this->quads.push_back(new Quad(--a, --b, --c, --d));
-    CalculateValences();
 }
 
 void OGLWidget::addVertex(float x, float y, float z) {
@@ -210,21 +209,24 @@ void OGLWidget::CalculateValences(){
 
             for(int faceId = 0; faceId < this->quads.length(); faceId++) {
                 for(int vertexId = 0; vertexId < 4; vertexId++) {
-                    if( this->quads.at(i)->vertexIndex[vertexId] == vertex ) {
+                    if( this->quads.at(faceId)->vertexIndex[vertexId] == vertex ) {
                         int left, right;
 
                         if(vertexId - 1 < 0)
-                            left = this->quads.at(i)->vertexIndex[3];
+                            left = this->quads.at(faceId)->vertexIndex[3];
                         else
-                            left = this->quads.at(i)->vertexIndex[vertexId - 1];
+                            left = this->quads.at(faceId)->vertexIndex[vertexId - 1];
 
                         if(vertexId + 1 > 3)
-                            right = this->quads.at(i)->vertexIndex[0];
+                            right = this->quads.at(faceId)->vertexIndex[0];
                         else
-                            right = this->quads.at(i)->vertexIndex[vertexId + 1];
+                            right = this->quads.at(faceId)->vertexIndex[vertexId + 1];
 
                         edges.insert(left);
                         edges.insert(right);
+
+                        this->vertices.at(vertex)->edges.insert(left);
+                        this->vertices.at(vertex)->edges.insert(right);
                     }
                 }
             }

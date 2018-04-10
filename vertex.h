@@ -1,12 +1,15 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
+#include <QSet>
 
 class Vertex
 {
 public:
     int valence;
     float vertexCoord[3];
+
+    QSet<int> edges;
 
     Vertex();
     Vertex( float p1[3]);

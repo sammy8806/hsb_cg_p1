@@ -23,6 +23,8 @@ public:
 
 public slots:
     void stepAnimation();
+
+public:
     void addTriFace(int a, int b, int c);
     void addQuadFace(int a, int b, int c, int d);
     void addVertex(float x, float y, float z);
