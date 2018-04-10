@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     connect(this, &MainWindow::cleanObjects, ui->glwidget, &OGLWidget::cleanObjects);
+    connect(this, &MainWindow::updateFinished, ui->glwidget, &OGLWidget::updateFinished);
     connect(this, &MainWindow::addVertex, ui->glwidget, &OGLWidget::addVertex);
     connect(this, &MainWindow::addTriFace, ui->glwidget, &OGLWidget::addTriFace);
     connect(this, &MainWindow::addQuadFace, ui->glwidget, &OGLWidget::addQuadFace);
@@ -54,6 +55,8 @@ void MainWindow::readData(QString filename)
     }
 
     objFile->close();
+
+    emit updateFinished();
 }
 
 void MainWindow::on_actionLoad_obj_File_triggered()

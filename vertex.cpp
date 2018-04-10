@@ -12,5 +12,5 @@ Vertex::Vertex(float x, float y, float z){
 }
 
 void Vertex::SetValenceCount(int valence){
-    valence = valence;
+    this->valence = valence;
 }

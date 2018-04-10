@@ -34,6 +34,7 @@ signals:
     void addTriFace(float, float, float);
     void addQuadFace(float, float, float, float);
     void cleanObjects();
+    void updateFinished();
 
 private:
     Ui::MainWindow *ui;

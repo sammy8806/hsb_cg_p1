@@ -100,9 +100,7 @@ void SetMaterialColor( int side, float r, float g, float b){
 }
 
 OGLWidget::OGLWidget(QWidget *parent) // constructor
-    : QOpenGLWidget(parent)/*,
-      triangles(new QVector<Triangle>()),
-      vertices(new QVector<Vertex>())*/
+    : QOpenGLWidget(parent)
 {
     // Setup the animation timer to fire every x msec
     animtimer = new QTimer(this);
@@ -130,16 +128,23 @@ void OGLWidget::cleanObjects() {
     this->quads.clear();
 }
 
+void OGLWidget::updateFinished()
+{
+    qDebug() << "Update finished !";
+    this->CalculateValences();
+}
+
 void OGLWidget::addTriFace(int a, int b, int c) {
-        this->tries.push_back(Triangle(--a, --b, --c));
+        this->tries.push_back(new Triangle(--a, --b, --c));
 }
 
 void OGLWidget::addQuadFace(int a, int b, int c, int d) {
-    this->quads.push_back(Quad(--a, --b, --c, --d));
+    this->quads.push_back(new Quad(--a, --b, --c, --d));
+    CalculateValences();
 }
 
 void OGLWidget::addVertex(float x, float y, float z) {
-    this->vertices.push_back(Vertex(x, y, z));
+    this->vertices.push_back(new Vertex(x, y, z));
 }
 
 void OGLWidget::initializeGL() // initializations to be called once
@@ -199,35 +204,32 @@ void OGLWidget::resizeGL(int w, int h) // called when window size is changed
 void OGLWidget::CalculateValences(){
     for(int i = 0; i < this->quads.length(); i++){
         for(int j = 0; j < 4; j++) {
+
             QSet<int> edges;
-            int vertex = this->quads[i].vertexIndex[j];
+            int vertex = this->quads[i]->vertexIndex[j];
 
             for(int faceId = 0; faceId < this->quads.length(); faceId++) {
-
                 for(int vertexId = 0; vertexId < 4; vertexId++) {
-
-                    if( this->quads.at(i).vertexIndex[vertexId] == vertex ) {
+                    if( this->quads.at(i)->vertexIndex[vertexId] == vertex ) {
                         int left, right;
 
                         if(vertexId - 1 < 0)
-                            left = 3;
+                            left = this->quads.at(i)->vertexIndex[3];
                         else
-                            left = this->quads.at(i).vertexIndex[vertexId - 1];
+                            left = this->quads.at(i)->vertexIndex[vertexId - 1];
 
                         if(vertexId + 1 > 3)
-                            right = 0;
+                            right = this->quads.at(i)->vertexIndex[0];
                         else
-                            right = this->quads.at(i).vertexIndex[vertexId + 1];
+                            right = this->quads.at(i)->vertexIndex[vertexId + 1];
 
                         edges.insert(left);
                         edges.insert(right);
                     }
-
                 }
-
             }
 
-            this->vertices.at(vertex).SetValenceCount(edges.size());
+            this->vertices.at(vertex)->SetValenceCount(edges.size());
         }
     }
 }
