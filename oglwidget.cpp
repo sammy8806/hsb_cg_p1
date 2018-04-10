@@ -132,7 +132,7 @@ void OGLWidget::updateFinished()
 {
     qDebug() << "Update finished !";
     this->CalculateValences();
-    this->CalculateAllNeighbours();
+    this->CalculateAllNeighbors();
 }
 
 void OGLWidget::addTriFace(int a, int b, int c) {
@@ -237,9 +237,37 @@ void OGLWidget::CalculateValences(){
     }
 }
 
-void OGLWidget::CalculateAllNeighbours()
-{
+void OGLWidget::CalculateAllNeighbors(){
+
     for(int face = 0; face < this->quads.length(); face++) {
 
+        int sameVertexCount = 0;
+        QSet<int> foundFaces;
+        for(int vertexId = 0; vertexId < 4; vertexId++){
+
+            for(int comparedFace = 0; comparedFace < this->quads.length(); comparedFace++){
+                if(face == comparedFace) {
+                    continue;
+                }
+
+                for(int comparedVertex = 0; comparedVertex < 4; comparedVertex++){
+
+                    if(this->quads.at(face)->vertexIndex[vertexId] == this->quads.at(comparedFace)->vertexIndex[comparedVertex]) {
+                        sameVertexCount++;
+                        foundFaces.insert(comparedFace);
+                        qDebug() << "Found same Vertecies at " << face << ":" << vertexId
+                                 << " and " << comparedFace << ":" << comparedVertex;
+                    }
+                }
+                if(sameVertexCount == 2) {
+                    sameVertexCount = 0;
+                    qDebug() << "Found neighbor " << comparedFace << " of " << face;
+                }
+            }
+
+            sameVertexCount = 0;
+        }
+        this->quads.at(face)->neighbors = foundFaces;
+        qDebug() << "Found xxx matching vertices";
     }
 }

@@ -97,7 +97,7 @@ private:
 
     void cross(float c[3], float const a[3], float const b[3]);
     void CalculateValences();
-    void CalculateAllNeighbours();
+    void CalculateAllNeighbors();
 };
 
 
