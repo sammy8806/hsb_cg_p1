@@ -10,3 +10,7 @@ Vertex::Vertex(float x, float y, float z){
     vertexCoord[1]=y;
     vertexCoord[2]=z;
 }
+
+void Vertex::SetValenceCount(int valence){
+    valence = valence;
+}

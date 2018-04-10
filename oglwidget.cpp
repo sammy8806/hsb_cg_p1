@@ -196,3 +196,38 @@ void OGLWidget::resizeGL(int w, int h) // called when window size is changed
     glViewport(0,0,w,h);
 }
 
+void OGLWidget::CalculateValences(){
+    for(int i = 0; i < this->quads.length(); i++){
+        for(int j = 0; j < 4; j++) {
+            QSet<int> edges;
+            int vertex = this->quads[i].vertexIndex[j];
+
+            for(int faceId = 0; faceId < this->quads.length(); faceId++) {
+
+                for(int vertexId = 0; vertexId < 4; vertexId++) {
+
+                    if( this->quads.at(i).vertexIndex[vertexId] == vertex ) {
+                        int left, right;
+
+                        if(vertexId - 1 < 0)
+                            left = 3;
+                        else
+                            left = this->quads.at(i).vertexIndex[vertexId - 1];
+
+                        if(vertexId + 1 > 3)
+                            right = 0;
+                        else
+                            right = this->quads.at(i).vertexIndex[vertexId + 1];
+
+                        edges.insert(left);
+                        edges.insert(right);
+                    }
+
+                }
+
+            }
+
+            this->vertices.at(vertex).SetValenceCount(edges.size());
+        }
+    }
+}

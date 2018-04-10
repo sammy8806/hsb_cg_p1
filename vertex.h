@@ -5,14 +5,16 @@
 class Vertex
 {
 public:
-    int n;
+    int valence;
     float vertexCoord[3];
 
     Vertex();
     Vertex( float p1[3]);
     Vertex(float x,float y, float z);
     void Print(); // print coordinates on screen
+    void SetValenceCount(int valence);
 };
+
 
 Vertex operator+(Vertex a, Vertex b);
 Vertex operator-(Vertex a, Vertex b);
