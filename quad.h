@@ -1,16 +1,17 @@
 #ifndef QUAD_H
 #define QUAD_H
 #include <QSet>
+#include <QVector>
 
 class Quad
 {
 public:
-    int vertexIndex[4];
+    QVector<int> vertexIndex;
     QSet<int> neighbors;
 
     Quad();
     Quad( float[4]);
-    Quad( float i, float j, float k, float l);//int - vertex index
+    Quad(int i, int j, int k, int l);//int - vertex index
     void Print();
 };
 

@@ -133,6 +133,7 @@ void OGLWidget::updateFinished()
     qDebug() << "Update finished !";
     this->CalculateValences();
     this->CalculateAllNeighbors();
+    this->CalculateAllMidpoints();
 }
 
 void OGLWidget::addTriFace(int a, int b, int c) {
@@ -271,3 +272,20 @@ void OGLWidget::CalculateAllNeighbors(){
         qDebug() << "Found xxx matching vertices";
     }
 }
+
+void OGLWidget::CalculateAllMidpoints(){
+
+    for(int face = 0; face < this->quads.length(); face++) {
+
+        float midpoint[3];
+        for(int vertexId = 0; vertexId < 4; vertexId++){
+
+            for(int coord = 0; coord < 3; coord++){
+                midpoint[coord] += vertices[this->quads.at(face)->vertexIndex[vertexId]]->vertexCoord[coord] / 4;
+            }
+        }
+        qDebug() << "Midpoint is at " << midpoint[0] << midpoint[1] << midpoint[2] << " for face " << face;
+    }
+}
+
+
