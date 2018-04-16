@@ -21,12 +21,14 @@ SOURCES += main.cpp\
     oglwidget.cpp \
     vertex.cpp \
     triangle.cpp \
-    quad.cpp
+    quad.cpp \
+    neighbor.cpp
 
 HEADERS  += mainwindow.h \
     oglwidget.h \
     vertex.h \
     triangle.h \
-    quad.h
+    quad.h \
+    neighbor.h
 
 FORMS    += mainwindow.ui

@@ -228,14 +228,6 @@ void OGLWidget::CalculateValences(){
                         vertexEdges.insert(left);
                         vertexEdges.insert(right);
 
-                        // Put into class variable for later use in CalculateAllEdgesMidpoints()
-                        if(!this->edges.contains(left)){
-                            this->edges.push_back(left);
-                        }
-                        if(!this->edges.contains(right)){
-                            this->edges.push_back(right);
-                        }
-
                         this->vertices.at(vertex)->edges.insert(left);
                         this->vertices.at(vertex)->edges.insert(right);
                     }
@@ -247,7 +239,7 @@ void OGLWidget::CalculateValences(){
                      << "has" << vertexEdges.size() << "edges";
         }
     }
-    qDebug() << "Overall" << this->edges.size() << "edges detected";
+// qDebug() << "Overall" << this->edges.size() << "edges detected";
 }
 
 void OGLWidget::CalculateAllNeighbors(){
@@ -268,6 +260,7 @@ void OGLWidget::CalculateAllNeighbors(){
                     if(this->quads.at(face)->vertexIndex[vertexId] == this->quads.at(comparedFace)->vertexIndex[comparedVertex]) {
                         sameVertexCount++;
                         foundFaces.insert(comparedFace);
+
                         qDebug() << "Found same Vertecies at " << face << ":" << vertexId
                                  << " and " << comparedFace << ":" << comparedVertex;
                     }
@@ -280,9 +273,33 @@ void OGLWidget::CalculateAllNeighbors(){
 
             sameVertexCount = 0;
         }
-        this->quads.at(face)->neighbors = foundFaces;
+        // this->quads.at(face)->neighbors = foundFaces;
         qDebug() << "Found xxx matching vertices";
     }
+
+    for(int face = 0; face < this->quads.length(); face++) {
+        for(int vertexId = 0; vertexId < 4; vertexId++) {
+            int v1 = this->quads.at(face)->vertexIndex.at(vertexId);
+            int v2 = this->quads.at(face)->vertexIndex.at( (vertexId + 1) >= 4 ? 0 : (vertexId + 1) );
+
+            std::pair<int, int> edgeName;
+            if(v1 < v2) {
+                edgeName = std::make_pair(v1, v2);
+            } else {
+                edgeName = std::make_pair(v2, v1);
+            }
+
+            QVector<int> *oldEdge = this->edges[edgeName];
+            if(oldEdge == nullptr) {
+                this->edges.insert(edgeName, new QVector<int>{face});
+            } else if(oldEdge->length() > 0) {
+                oldEdge->append(face);
+            }
+        }
+    }
+
+    qDebug() << "Found" << this->edges.size() << "edges";
+
 }
 
 void OGLWidget::CalculateAllFacesMidpoints(){
@@ -304,7 +321,7 @@ void OGLWidget::CalculateAllFacesMidpoints(){
 
 
 void OGLWidget::CalculateAllEdgesMidpoints(){
-
+/*
     qDebug() << "There are" << edges.size() << "edges";
     for(int edge = 0; edge < edges.size(); edge++){
 
@@ -323,5 +340,5 @@ void OGLWidget::CalculateAllEdgesMidpoints(){
         qDebug() << "Edge Midpoint is at " << edgeMidpoint[0] << edgeMidpoint[1] << edgeMidpoint[2]
                  << " for edge " << edges.at(edge);
         addVertex(edgeMidpoint[0], edgeMidpoint[1], edgeMidpoint[2]);
-    }
+    }*/
 }

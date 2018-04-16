@@ -4,6 +4,7 @@
 #include "quad.h"
 #include "vertex.h"
 #include "triangle.h"
+#include "neighbor.h"
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -94,7 +95,8 @@ private:
     QVector<Quad*> quads;
     QVector<Triangle*> tries;
     QVector<Vertex*> vertices;
-    QVector<int> edges;
+
+    QMap<std::pair<int, int>, QVector<int>*> edges;
 
     void cross(float c[3], float const a[3], float const b[3]);
     void CalculateValences();
