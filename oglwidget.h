@@ -94,11 +94,13 @@ private:
     QVector<Quad*> quads;
     QVector<Triangle*> tries;
     QVector<Vertex*> vertices;
+    QVector<int> edges;
 
     void cross(float c[3], float const a[3], float const b[3]);
     void CalculateValences();
     void CalculateAllNeighbors();
-    void CalculateAllMidpoints();
+    void CalculateAllFacesMidpoints();
+    void CalculateAllEdgesMidpoints();
 };
 
 

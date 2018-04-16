@@ -133,7 +133,8 @@ void OGLWidget::updateFinished()
     qDebug() << "Update finished !";
     this->CalculateValences();
     this->CalculateAllNeighbors();
-    this->CalculateAllMidpoints();
+    this->CalculateAllFacesMidpoints();
+    this->CalculateAllEdgesMidpoints();
 }
 
 void OGLWidget::addTriFace(int a, int b, int c) {
@@ -206,7 +207,7 @@ void OGLWidget::CalculateValences(){
     for(int i = 0; i < this->quads.length(); i++){
         for(int j = 0; j < 4; j++) {
 
-            QSet<int> edges;
+            QSet<int> vertexEdges;
             int vertex = this->quads[i]->vertexIndex[j];
 
             for(int faceId = 0; faceId < this->quads.length(); faceId++) {
@@ -224,8 +225,16 @@ void OGLWidget::CalculateValences(){
                         else
                             right = this->quads.at(faceId)->vertexIndex[vertexId + 1];
 
-                        edges.insert(left);
-                        edges.insert(right);
+                        vertexEdges.insert(left);
+                        vertexEdges.insert(right);
+
+                        // Put into class variable for later use in CalculateAllEdgesMidpoints()
+                        if(!this->edges.contains(left)){
+                            this->edges.push_back(left);
+                        }
+                        if(!this->edges.contains(right)){
+                            this->edges.push_back(right);
+                        }
 
                         this->vertices.at(vertex)->edges.insert(left);
                         this->vertices.at(vertex)->edges.insert(right);
@@ -233,9 +242,12 @@ void OGLWidget::CalculateValences(){
                 }
             }
 
-            this->vertices.at(vertex)->SetValenceCount(edges.size());
+            this->vertices.at(vertex)->SetValenceCount(vertexEdges.size());
+            qDebug() << "Vertex" << j << "of face" << i
+                     << "has" << vertexEdges.size() << "edges";
         }
     }
+    qDebug() << "Overall" << this->edges.size() << "edges detected";
 }
 
 void OGLWidget::CalculateAllNeighbors(){
@@ -273,19 +285,43 @@ void OGLWidget::CalculateAllNeighbors(){
     }
 }
 
-void OGLWidget::CalculateAllMidpoints(){
+void OGLWidget::CalculateAllFacesMidpoints(){
 
     for(int face = 0; face < this->quads.length(); face++) {
 
-        float midpoint[3];
+        float faceMidpoint[3];
         for(int vertexId = 0; vertexId < 4; vertexId++){
 
             for(int coord = 0; coord < 3; coord++){
-                midpoint[coord] += vertices[this->quads.at(face)->vertexIndex[vertexId]]->vertexCoord[coord] / 4;
+                faceMidpoint[coord] += vertices[this->quads.at(face)->vertexIndex[vertexId]]->vertexCoord[coord] / 4;
             }
         }
-        qDebug() << "Midpoint is at " << midpoint[0] << midpoint[1] << midpoint[2] << " for face " << face;
+        qDebug() << "Face Midpoint is at " << faceMidpoint[0] << faceMidpoint[1] << faceMidpoint[2] << " for face " << face;
+        addVertex(faceMidpoint[0], faceMidpoint[1], faceMidpoint[2]);
     }
+    qDebug() << "Now" << vertices.size() << "vertices overall";
 }
 
 
+void OGLWidget::CalculateAllEdgesMidpoints(){
+
+    qDebug() << "There are" << edges.size() << "edges";
+    for(int edge = 0; edge < edges.size(); edge++){
+
+        float edgeMidpoint[3];
+        for(int coord = 0; coord < 3; coord++){
+
+            if(edge + 1 < edges.size()){
+                edgeMidpoint[coord] = vertices[this->edges.at(edge)]->vertexCoord[coord] / 2
+                                    + vertices[this->edges.at(edge+1)]->vertexCoord[coord] / 2;
+            }
+            else{
+                edgeMidpoint[coord] = vertices[this->edges.at(edge)]->vertexCoord[coord] / 2
+                                    + vertices[this->edges.at(0)]->vertexCoord[coord] / 2;
+            }
+        }
+        qDebug() << "Edge Midpoint is at " << edgeMidpoint[0] << edgeMidpoint[1] << edgeMidpoint[2]
+                 << " for edge " << edges.at(edge);
+        addVertex(edgeMidpoint[0], edgeMidpoint[1], edgeMidpoint[2]);
+    }
+}
