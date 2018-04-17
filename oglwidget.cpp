@@ -365,13 +365,14 @@ void OGLWidget::CalculateAllAlternativeVertices()
     QVector<Vertex*> edgepoints;
 
     for(int vertex = 0; vertex < this->vertices.size(); vertex++) {
-        if(this->vertices.at(vertex)->valence == -1) {
-            edgepoints.append(this->vertices.at(vertex));
+        if(this->vertices.at(vertex)->valence == -1) {      // Edge and face midpoint vertices don't have a valence yet
+            edgepoints.append(this->vertices.at(vertex));   // so we can differentiate between midpoint vertices
         } else {
-            realVertices.append(this->vertices.at(vertex));
+            realVertices.append(this->vertices.at(vertex)); // and original vertices
         }
     }
 
+    // Loop for calculating the alternative vertices
     for(Vertex* vertex : realVertices) {
         QVector<Vertex*> facepoints;
 
@@ -381,7 +382,7 @@ void OGLWidget::CalculateAllAlternativeVertices()
         QList<std::pair<int, int>> quadVertices;
         QSet<Quad*> quads;
 
-        //qset<int>
+        //qset<int>     // calculating the average of the edge midpoint vertices
         for(int vertex_id : vertex->edges) {
             edge = edge + *this->vertices.at(vertex_id);
 
@@ -389,6 +390,7 @@ void OGLWidget::CalculateAllAlternativeVertices()
         }
         edge = edge / vertex->edges.size();
 
+        // Getting the right face midpoints for cc subdivision (?)
         for(int i = 0; i<quadVertices.size(); i++) {
             QVector<int>* quadList = this->edges.value(quadVertices.at(i));
             if(quadList == nullptr) {
@@ -401,6 +403,7 @@ void OGLWidget::CalculateAllAlternativeVertices()
             }
         }
 
+        // calculating the average of the face midpoint vertices
         for(Vertex* facepoint : facepoints) {
             face = face + *facepoint;
         }
