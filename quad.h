@@ -5,12 +5,15 @@
 #include <QVector>
 
 #include "neighbor.h"
+#include "vertex.h"
 
 class Quad
 {
 public:
     QVector<int> vertexIndex;
     QSet<Neighbor*> neighbors;
+
+    Vertex *faceVertex;
 
     Quad();
     Quad( float[4]);

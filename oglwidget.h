@@ -29,6 +29,7 @@ public:
     void addTriFace(int a, int b, int c);
     void addQuadFace(int a, int b, int c, int d);
     void addVertex(float x, float y, float z);
+    void addVertex(Vertex *vertex);
     void cleanObjects();
     void updateFinished();
 
@@ -96,6 +97,8 @@ private:
     QVector<Triangle*> tries;
     QVector<Vertex*> vertices;
 
+    QVector<Vertex*> facepoints;
+
     QMap<std::pair<int, int>, QVector<int>*> edges;
 
     void cross(float c[3], float const a[3], float const b[3]);
@@ -103,6 +106,7 @@ private:
     void CalculateAllNeighbors();
     void CalculateAllFacesMidpoints();
     void CalculateAllEdgesMidpoints();
+    void CalculateAllAlternativeVertices();
 };
 
 

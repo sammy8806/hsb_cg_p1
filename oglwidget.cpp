@@ -135,6 +135,7 @@ void OGLWidget::updateFinished()
     this->CalculateAllNeighbors();
     this->CalculateAllFacesMidpoints();
     this->CalculateAllEdgesMidpoints();
+    this->CalculateAllAlternativeVertices();
 }
 
 void OGLWidget::addTriFace(int a, int b, int c) {
@@ -147,6 +148,10 @@ void OGLWidget::addQuadFace(int a, int b, int c, int d) {
 
 void OGLWidget::addVertex(float x, float y, float z) {
     this->vertices.push_back(new Vertex(x, y, z));
+}
+
+void OGLWidget::addVertex(Vertex *vertex) {
+    this->vertices.push_back(vertex);
 }
 
 void OGLWidget::initializeGL() // initializations to be called once
@@ -314,31 +319,95 @@ void OGLWidget::CalculateAllFacesMidpoints(){
             }
         }
         qDebug() << "Face Midpoint is at " << faceMidpoint[0] << faceMidpoint[1] << faceMidpoint[2] << " for face " << face;
-        addVertex(faceMidpoint[0], faceMidpoint[1], faceMidpoint[2]);
+        Vertex *vertex = new Vertex(faceMidpoint[0], faceMidpoint[1], faceMidpoint[2]);
+        // addVertex(vertex);
+        // this->facepoints.append(vertex);
+        this->quads.at(face)->faceVertex = vertex;
     }
     qDebug() << "Now" << vertices.size() << "vertices overall";
 }
 
 
 void OGLWidget::CalculateAllEdgesMidpoints(){
-/*
-    qDebug() << "There are" << edges.size() << "edges";
-    for(int edge = 0; edge < edges.size(); edge++){
 
-        float edgeMidpoint[3];
-        for(int coord = 0; coord < 3; coord++){
+    for(auto edge : edges.toStdMap()) {
+        int e1 = edge.first.first;
+        int e2 = edge.first.second;
 
-            if(edge + 1 < edges.size()){
-                edgeMidpoint[coord] = vertices[this->edges.at(edge)]->vertexCoord[coord] / 2
-                                    + vertices[this->edges.at(edge+1)]->vertexCoord[coord] / 2;
+        int f1 = edge.second->at(0);
+        int f2 = edge.second->at(1);
+
+        qDebug() << "e1 e2 f1 f2" << e1 << e2 << f1 << f2;
+
+        Vertex e_v1 = *this->vertices.at(e1);
+        Vertex e_v2 = *this->vertices.at(e2);
+
+        Vertex f_v1 = *this->quads.at(f1)->faceVertex;
+        Vertex f_v2 = *this->quads.at(f2)->faceVertex;
+
+        // e = ( (e_v1 + e_v2)/2 + (f_v1 + f_v2)/2 )/2;
+        Vertex v = (e_v1 + e_v2) / 2;
+        Vertex f = (f_v1 + f_v2) / 2;
+        Vertex result = ( v + f )/2;
+
+        this->vertices.append(new Vertex(result));
+        qDebug() << "#midpoint done";
+    }
+
+    qDebug() << "#all midpoints done";
+
+}
+
+void OGLWidget::CalculateAllAlternativeVertices()
+{
+    // for vertice (all edgepoints ; all facepoints ; old vertice ; valence(3) )
+    QVector<Vertex*> realVertices;
+    QVector<Vertex*> edgepoints;
+
+    for(int vertex = 0; vertex < this->vertices.size(); vertex++) {
+        if(this->vertices.at(vertex)->valence == -1) {
+            edgepoints.append(this->vertices.at(vertex));
+        } else {
+            realVertices.append(this->vertices.at(vertex));
+        }
+    }
+
+    for(Vertex* vertex : realVertices) {
+        QVector<Vertex*> facepoints;
+
+        Vertex edge;
+        Vertex face;
+
+        QList<std::pair<int, int>> quadVertices;
+        QSet<Quad*> quads;
+
+        //qset<int>
+        for(int vertex_id : vertex->edges) {
+            edge = edge + *this->vertices.at(vertex_id);
+
+            quadVertices.append(std::make_pair(this->vertices.indexOf(vertex), vertex_id));
+        }
+        edge = edge / vertex->edges.size();
+
+        for(int i = 0; i<quadVertices.size(); i++) {
+            QVector<int>* quadList = this->edges.value(quadVertices.at(i));
+            if(quadList == nullptr) {
+                continue;
             }
-            else{
-                edgeMidpoint[coord] = vertices[this->edges.at(edge)]->vertexCoord[coord] / 2
-                                    + vertices[this->edges.at(0)]->vertexCoord[coord] / 2;
+
+            for(auto e : quadList->toStdVector() ) {
+                quads.insert( this->quads.at(e) );
+                facepoints.append(this->quads.at(e)->faceVertex);
             }
         }
-        qDebug() << "Edge Midpoint is at " << edgeMidpoint[0] << edgeMidpoint[1] << edgeMidpoint[2]
-                 << " for edge " << edges.at(edge);
-        addVertex(edgeMidpoint[0], edgeMidpoint[1], edgeMidpoint[2]);
-    }*/
+
+        for(Vertex* facepoint : facepoints) {
+            face = face + *facepoint;
+        }
+        face = face / facepoints.size();
+
+        qDebug() << "#stuff";
+    }
+
+    qDebug() << "#stuff 2";
 }
