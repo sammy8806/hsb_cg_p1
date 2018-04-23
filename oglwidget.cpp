@@ -358,20 +358,21 @@ void OGLWidget::CalculateAllEdgesMidpoints(){
 
 }
 
-void OGLWidget::CalculateAllAlternativeVertices()
-{
+void OGLWidget::CalculateAllAlternativeVertices(){
+
     // for vertice (all edgepoints ; all facepoints ; old vertice ; valence(3) )
     QVector<Vertex*> realVertices;
     QVector<Vertex*> edgepoints;
 
     for(int vertex = 0; vertex < this->vertices.size(); vertex++) {
-        if(this->vertices.at(vertex)->valence == -1) {      // Edge and face midpoint vertices don't have a valence yet
+        if(this->vertices.at(vertex)->valence <= 0) {       // Edge and face midpoint vertices don't have a valence yet
             edgepoints.append(this->vertices.at(vertex));   // so we can differentiate between midpoint vertices
         } else {
             realVertices.append(this->vertices.at(vertex)); // and original vertices
         }
     }
 
+    QVector<Vertex> alternativeVertices;
     // Loop for calculating the alternative vertices
     for(Vertex* vertex : realVertices) {
         QVector<Vertex*> facepoints;
@@ -408,6 +409,13 @@ void OGLWidget::CalculateAllAlternativeVertices()
             face = face + *facepoint;
         }
         face = face / facepoints.size();
+
+        // Calculation of the new vertex
+        Vertex newVertex;
+        for(int coord = 0; coord < 3; coord++){
+            newVertex.vertexCoord[coord] = 1 / vertex->valence * (4 * edge.vertexCoord[coord] - face.vertexCoord[coord] + (vertex->valence - 3) * vertex->vertexCoord[coord]);
+        }
+        alternativeVertices.append(newVertex);
 
         qDebug() << "#stuff";
     }
