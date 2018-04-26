@@ -203,69 +203,90 @@ The first tasks are about creating fundamental classes that will be needed for f
 
 First needed are a vertex and a quad class.
 
-Vertices are points in a two or three dimensional space that can be connected to each other to build the edges of an object. So for a vertex class the coordinates in a 3D environment are needed and for later purposes a vertex needs to know how many edges are connected to it, the so called "valence".
+Vertices are points in a two or three dimensional space that can be connected to each other to build the edges of an object (see figure \ref{fig:vertex}). So for a vertex class the coordinates in a 3D environment are needed and for later purposes a vertex needs to know how many edges are connected to it, the so called "valence".
 
 \begin{wrapfigure}{R}{0.45\textwidth}
-	\label{fig:vertex}
 	\centering
 	\includegraphics[width=0.35\textwidth]{vertex.png}
 	\caption{Vertex with some edges to other vertices}
+	\label{fig:vertex}
 	\vspace{0.6cm}
 \end{wrapfigure}
 
-Quads (quadratic faces) are made of 4 vertices that build the face. Besides the 4 vertices (saved as IDs in the quad class) the quad also needs to know its adjacent quads, its neighbors. To determine what the outside of a face is we need to calculate the normal vector of the face. The normal vector is calculated by the cross product of the quads diagonals.
+Quads (quadratic faces) are made of 4 vertices that build the face. Besides the 4 vertices (saved as IDs in the quad class) the quad also needs to know its adjacent quads, its neighbors. To determine what the outside of a face is we need to calculate the normal vector of the face. The normal vector is calculated by the cross product of the quads diagonals (see figure \ref{fig:quad}).
 
 \begin{wrapfigure}{R}{0.45\textwidth}
-	\label{fig:quad}
 	\centering
 	\includegraphics[width=0.4\textwidth]{quad.png}
 	\caption{Quad with a normal vector in the center of it}
+	\label{fig:quad}
 	\vspace{-1cm}
 \end{wrapfigure}
 
 For rendering an object it is necessary to read its vertices and faces from a file. For these exercises it can be assumed that all faces are quads. The number of vertices and quads are variable depending on the object that is tried to load in. So instead of using static arrays it is required to use something dynamic like a QVector\footnote{\url{http://doc.qt.io/qt-5/qvector.html}}.
 
-Now the object can be rendered. This will be done in two ways, as quadrilateral polygons to see the faces and how they reflect light and as wireframe to see the vertices and edges.
+Now the object can be rendered. This will be done in two ways, as quadrilateral polygons to see the faces and how they reflect light (see figure \ref{fig:renderedcube}) and as wireframe to see the vertices and edges.
 
 \begin{wrapfigure}{R}{0.5\textwidth}
-	\label{fig:renderedcube}
 	\centering
 	\includegraphics[width=0.45\textwidth]{renderedcube.png}
 	\caption{Render of an example cube}
+	\label{fig:renderedcube}
 \end{wrapfigure}
 
 \subsection{Problem 2: Mesh Connectivity}
 
 In Problem 1 the created classes got variables like valence for the vertices or neighbors of the quads. These need to be calculated now.
 
-The valence of each vertex can be calculated by looking at every quad and see which vertex is next to the other (that builds an edge together) and see with how many other vertices that current vertex is connected. To prevent adding an edge twice to a vertex this needs to be checked as well.
-
+The valence of each vertex can be calculated by looking at every quad and see which vertex is next to the other (see figure \ref{fig:faces}) and see with how many other vertices that current vertex is connected. To prevent adding an edge twice to a vertex this needs to be checked as well.
 
 \begin{wrapfigure}{L}{0.5\textwidth}
-	\label{fig:cube}
+	\includegraphics[width=0.45\textwidth]{faces.png}
+	\caption{A list of faces from the example cube.obj with edge building vertices shown (first two rows)}
+	\label{fig:faces}
+\end{wrapfigure}
+
+\begin{wrapfigure}{L}{0.5\textwidth}
 	\includegraphics[width=0.45\textwidth]{cube.png}
 	\caption{An opened cube with all vertex indices}
+	\label{fig:cube}
 \end{wrapfigure}
 
 For the neighbors of a quad it needs to be checked if a quad shares the same 2 vertices or edge with another quad, if it does it will be added to the current quad as its neighbor.
 
 \section{Exercise 2: Catmull-Clark Subdivision}
+The goal of this exercise is to smooth objects, making them rounder by looking at nearby vertices of the altering vertex.
 
 \subsection{Problem 1: Catmull-Clark Subdivision Masks}
+For creating the subdivision mask there are some preparations needed before applying the subdivision in the end.
 
 \subsubsection{Part a: Quad midpoints}
-The first and easiest part is the calculation of the midpoints of the quads. To get the midpoint of a quad the average of all vertices of that quad is needed.
-\begin{equation} \label{quadratic}
+The first and easiest part is the calculation of the midpoints of the quads. To get the midpoint of a quad the average of all vertices of that quad is needed (see equation \ref{eq:face_midpoint}).
+\begin{equation} \label{eq:face_midpoint}
         f \ = \overline{v_{f}}
 \end{equation} 
 So for quads every vertex needs to be devided by 4.
 
 \subsubsection{Part b: Edge midpoints}
-The next thing needed for the subdivision mask are midpoints of every edge of an object.
+The next thing needed for the subdivision mask are midpoints of every edge of an object. So for this kind of midpoint the average of both vertices of that edge and the average of the two quad midpoints next to the edge are needed.
+\begin{equation} \label{eq:edge_midpoint}
+        e \ = \frac{1}{2} ( \overline{v_{e}} + \overline{f_{e}} )
+\end{equation} 
+Because two averages of vertices were summed up, this sum needs to divide by two (see equation \ref{eq:edge_midpoint}).
+
+When going through all edges it needs to be prevented that an edge midpoint gets calculated twice due to indices may be flipped in another quad. For example q1 has vertices 1 2 3 4 and q2 has vertices 2 1 5 6, the 1 and 2 are in both quads but in the second one it is the other way around and may not be detected as the same edge.
 
 \subsubsection{Part c: Alternative vertex mask}
+Now to get the alternative mask, the alternative vertices are needed. These are calculated as seen in equation \ref{eq:alternative_vertex_mask}.
+\begin{equation} \label{eq:alternative_vertex_mask}
+        v_{new} \ = \frac{1}{n_{v}} ( 4 \overline{e_{v}} - \overline{f_{v}} + (n_{v}-3) v)
+\end{equation} 
+$n_{v}$ is the valence of the current vertex, $\overline{e_{v}}$ and $\overline{f_{v}}$ are the averages of all edge and face midpoints next to the vertex and $v$ the original vertex.
+
+After the alternative vertices are calculated they will replace the old originals.
 
 \subsection{Problem 2: Recursive Subdivision}
+At the end all new vertices (face and edge midpoints and alternative vertices) get connected to new sub-faces, overwriting the old faces to restore the mesh connectivity. When the subdivision gets applied multiple times, the object gets more and more smoothed.
 
 
 \end{document}
