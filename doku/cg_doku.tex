@@ -1,0 +1,409 @@
+\documentclass[11.5pt,oneside,a4paper]{scrartcl}
+
+%Einstellungen der Seitenränder
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2cm,includeheadfoot]{geometry}
+
+\newcommand{\Linie}{\textcolor{grau}{\rule{\textwidth}{0.4pt}}\\}
+
+%% Einbinden von Bildern
+%%
+%% Aufruf: \image{#1}{#2}{#3}{#4}
+%% #1 ...: Bildbreite
+%% #2 ...: Dateiname
+%%         Der Dateiname mit davor gesetztem „fig:“ ist gleichzeitig
+%%         der Name ueber den das Bild referenziert werden kann.
+%% #3 ...: Bildunterschrift        
+%% #4 ...: Position wo das Bild erscheinen soll
+\newcommand{\image}[4]{
+        \begin{figure}[#4]               %% Beginn der Gleitumgebung
+                \centering                     %% Bild zentrieren
+                \includegraphics[width=#1]{#2} %% Bild laden
+                \caption{#3}                   %% Bildunterschrift
+                \label{fig:#2}                 %% Label fuer Referenzierung
+        \end{figure}                     %% Ende der Gleitumgebung
+}
+
+\newcommand{\imageFig}[4]{
+    \begin{figure}[#4]               %% Beginn der Gleitumgebung
+        \begin{center}
+            \includegraphics[width=#1]{#2} %% Bild laden
+        \end{center}
+        \caption{#3}                   %% Bildunterschrift
+        \label{fig:#2}                 %% Label fuer Referenzierung
+    \end{figure}                     %% Ende der Gleitumgebung
+}
+
+%% Zum Schreiben von vielen Linien auf den man analog schreiben kann
+\newcounter{ct}
+\newcommand{\writewritinglines}[1]{
+        \forloop{ct}{0}{\value{ct} < #1}
+        {
+                \Linie
+        }
+}
+
+\newcommand*{\strich}[1]{\ensuremath{\overline{\text{#1}}}}
+\newcommand*\lxor{\mathbin{\oplus}}
+
+%\usepackage[utf8]{inputenc}
+\usepackage[german]{babel}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{lastpage}
+\usepackage{textcomp}
+\usepackage{forloop}
+\usepackage{booktabs}
+\usepackage{lastpage}
+\usepackage[autostyle=true,german=quotes]{csquotes}
+\usepackage{wrapfig}
+\usepackage{svg}
+\usepackage{latexsym}
+
+\input{kvmacros}
+
+\usepackage{fourier}
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,positioning}
+\usepackage{circuitikz}
+\usepackage{listings}
+
+%%%%%%%%%%
+% Colors %
+%%%%%%%%%%
+
+\RequirePackage{xcolor}
+
+\definecolor{white}{RGB}{255,255,255}
+
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{gray}{HTML}{4D4D4D}
+\definecolor{lightgray}{HTML}{999999}
+
+\definecolor{green}{HTML}{C2E15F}
+\definecolor{orange}{HTML}{FDA333}
+\definecolor{purple}{HTML}{D3A4F9}
+\definecolor{red}{HTML}{FB4485}
+\definecolor{blue}{HTML}{6CE0F1}
+
+\colorlet{green}{gray}
+\colorlet{orange}{gray}
+\colorlet{purple}{gray}
+\colorlet{brown}{gray}
+\colorlet{red}{gray}
+\colorlet{blue}{gray}
+\colorlet{fillheader}{white}
+\colorlet{header}{gray}
+\colorlet{fillheader}{gray}
+\colorlet{header}{white}
+\colorlet{textcolor}{gray}
+\colorlet{headercolor}{gray}
+
+%%%%%%%%%
+% Fonts %
+%%%%%%%%%
+
+\RequirePackage[quiet]{fontspec}
+%\RequirePackage[math-style=TeX,vargreek-shape=unicode]{unicode-math}
+
+
+%% Windows / Linux
+%\newfontfamily\bodyfont[]{HelveticaNeue}
+%\newfontfamily\thinfont[]{HelveticaNeue Thin}
+%\newfontfamily\headingfont[]{HelveticaNeue BlackCond}
+%\defaultfontfeatures{Mapping=tex-text}
+%\setmainfont[Mapping=tex-text, Color=textcolor]{HelveticaNeue Light}
+
+
+%% OSX
+%\newfontfamily\bodyfont[]{Helvetica Neue}
+%\newfontfamily\thinfont[]{Helvetica Neue UltraLight}
+%\newfontfamily\headingfont[]{Helvetica Neue Condensed Bold}
+%\defaultfontfeatures{Mapping=tex-text}
+%\setmainfont[Mapping=tex-text, Color=textcolor]{Helvetica Neue Light}
+
+%\RequirePackage[quiet]{fontspec}
+%\RequirePackage[math-style=TeX,vargreek-shape=unicode]{unicode-math}
+
+\lstset{numbers=none,
+		numberstyle=\color{white},
+		extendedchars=true,
+		language=,
+	%	backgroundcolor=\color{gray},
+		framerule=0.25pt,
+		morecomment=[s][\color{darkgray}]{/**}{**/},
+		morecomment=[l][\color{darkgray}]{//},
+	%	showlines=false,
+		frame=none,		
+		tabsize=4,
+		framexleftmargin=7mm,
+		rulesepcolor=\color{gray},
+		breakatwhitespace=true,
+		fontadjust=true,
+		basicstyle =\ttfamily\color{black}\small,
+		keywordstyle =\bfseries\color{blue},
+%		identifierstyle =\underbar,
+		commentstyle =\color{darkgray},
+		stringstyle =\color{darkred} %\itshape
+		}
+
+% Kopf und Fußzeile
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+
+% Kopfzeile
+\fancyhead[L]{}
+\fancyhead[R]{}
+
+% Fußzeile
+\fancyfoot[L]{}
+\fancyfoot[R]{\thepage{}} %% \pageref{LastPage}
+%
+%opening
+\title{Documentation of Computer Graphics Exercises 1 \& 2}
+\author{Steven Tappert \& Marvin Uwe Marken\\\small{Mat. Nr.: 372838 \& 373116}}
+\date{}
+
+\setlength\intextsep{0pt}
+\setlength{\parindent}{0pt} 
+
+\begin{document}
+
+\clearpage
+{\let\newpage\relax\maketitle}
+\thispagestyle{empty}
+\vspace{20pt}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{hsb.png} \\
+	
+\end{figure}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Abstract}
+This documentation shows and explains how the authors completed given tasks "'Exercise 1 \& 2"' in the course "'Computer Graphics"'. The tasks are done in the IDE "'qt Creator"' with C++ as programming language. Main subject is to render 3D objects and subdivide the object faces into smaller faces later.
+
+\section{Exercise 1: Quad-Mesh Connectivity}
+
+The first tasks are about creating fundamental classes that will be needed for further tasks, reading and rendering object files and providing a connected mesh at the end.
+
+
+\subsection{Problem 1: Rendering Quad Meshes}
+
+First needed are a vertex and a quad class.
+
+Vertices are points in a two or three dimensional space that can be connected to each other to build the edges of an object. So for a vertex class the coordinates in a 3D environment are needed and for later purposes a vertex needs to know how many edges are connected to it, the so called "valence".
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=7.0cm]{vertex.png}
+\caption{\label{ figtorus}
+	Vertex 1 with some edges to other vertices.
+}
+\end{figure}
+
+\newpage
+Quads (quadratic faces) are made of 4 vertices that build the face. Besides the 4 vertices (saved as IDs in the quad class) the quad also needs to know its adjacent quads, its neighbors. To determine what the outside of a face is we need to calculate the normal vector of the face. The normal vector is calculated by the cross product of the quads diagonals.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=7.0cm]{quad.png}
+\caption{\label{ figtorus}
+	A quad with a normal vector in the center of it.
+}
+\end{figure}
+
+For rendering an object it is necessary to read its vertices and faces from a file. For these exercises it can be assumed that all faces are quads. The number of vertices and quads are variable depending on the object that is tried to load in. So instead of using static arrays it is required to use something dynamic like a QVector\footnote{http://doc.qt.io/qt-5/qvector.html}.
+
+% \url{https://steven-tappert.de/dl/X32-OSC-v0.74.pdf}
+
+Now the object can be rendered. This will be done in two ways, as quadrilateral polygons to see the faces and how they reflect light and as wireframe to see the vertices and edges.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=7.0cm]{renderedcube.png}
+\caption{\label{ figtorus}
+	A render of an example cube.
+}
+\end{figure}
+
+
+\subsection{Problem 2: Mesh Connectivity}
+
+In Problem 1 the created classes got variables like valence for the vertices or neighbors of the quads. These need to be calculated now.
+
+The valence of each vertex can be calculated by looking at every quad and see which vertex is next to the other (that builds an edge together) and see with how many other vertices that current vertex is connected. To prevent adding an edge twice to a vertex this needs to be checked as well.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=7.0cm]{cube.png}
+\caption{\label{ figtorus}
+	An opened cube with all vertex indices.
+}
+\end{figure}
+
+\newpage
+For the neighbors of a quad it needs to be checked if a quad shares the same 2 vertices or edge with another quad, if it does it will be added to the current quad as its neighbor.
+
+\section{Exercise 2: Catmull-Clark Subdivision}
+
+\subsection{Problem 1: Catmull-Clark Subdivision Masks}
+
+\subsubsection{Part a: Quad midpoints}
+The first and easiest part is the calculation of the midpoints of the quads. To get the midpoint of a quad the average of all vertices of that quad is needed.
+\begin{equation} \label{quadratic}
+        f \ = \overline{v_{f}}
+\end{equation} 
+So for quads every vertex needs to be devided by 4.
+
+\subsubsection{Part b: Edge midpoints}
+The next thing needed for the subdivision mask are midpoints of every edge of an object.
+
+\subsubsection{Part c: Alternative vertex mask}
+
+\subsection{Problem 2: Recursive Subdivision}
+
+%\section{Beschreibung des Umfeldes}
+%
+%Die Arbeitsausrüstung besteht bei mir aus einem Desktop mit mehreren Bildschirmen, den ich am ersten Tag auf Basis von Windows 8.1 Pro selbst einrichten durfte.
+%
+%\vspace{20pt}
+%        \begin{figure}[h!]               %% Beginn der Gleitumgebung
+%                \centering                     %% Bild zentrieren
+%                %\includegraphics[width=13cm]{schreibtisch_alt} %% Bild laden
+%                \caption{Arbeitsplatz mit mehreren Monitoren}                   %% Bildunterschrift
+%                \label{fig:schreibtisch_alt}                 %% Label fuer Referenzierung
+%        \end{figure}                     %% Ende der Gleitumgebung
+%\vspace{20pt}
+%
+%Andere Mitarbeiter hatten entweder einen Desktop-PC oder ein Notebook, welches auch das Arbeiten von Zuhause  mithilfe eines VPN ermöglicht.
+%
+%Vor Ort stehen vier Server, wobei immer 2 Server eine Einheit für Backups bilden. Zwei dieser Server sind kleine DELL PowerEdge und die anderen beiden sind auf Desktop-Hardware basierende Systeme.
+%
+%\newpage
+%
+%%Hardware:
+%%* Vier Server (ESXi Base)
+%%* All Selfhosted (Jira, Confluence, Gitlab, Mail, Kalender, ...)
+%%* VDSL
+%
+%%* Desktop/Laptop(i5-i7 8-16GB RAM)
+%%* Teilweise Kundengeräte für VPN Zugriff
+%
+%%Software:
+%%* ESXi
+%%* SoGo
+%%* Jenkins
+%%* SonarQube
+%%* SVN
+%%* Win8.1-10 / Ubuntu
+%%* OpenVPN
+%%* Barracuda VPN
+%%* Samba
+%
+%\section{Darstellung Ihrer Aufgabe}
+%%% Wartung / Planung / Umsetzung der Infrastruktur und Erweiterung dieser
+%
+%% "Einfachere" Updates von Infrastruktur mithilfe von Docker.
+%%% "Bessere" Backupfähigkeit einzelner Komponenten.
+%
+%%% CI mit Jenkins und Docker
+%
+%%% ---
+%
+%%% Auf Basis eines Buildservers einer Code-Analyse Platform und einer Linux-Basierenden Containerplattform soll eine Umgebung geschaffen werden, die konsistente und reproduzierbare Build- und Testergebnisse für die Entwicklung von Java basierender Software geschaffen werden.
+%
+%%% -----------------------
+%% Viel Freiheit durch alleinarbeit
+%%
+%% Vorgabe (Bereits aufgesetzt): Docker, Jenkins, SonarQube
+%% Selbst aufgesetzt: Tomcat, DBs
+%
+%\subsection{Beschreibung des allgemeinen Problemfeldes}
+%In der Softwareentwicklung größerer Projekte mit einigen Abhängigkeiten wie Datenbanken, REST-Dienste oder SAP Systemen gibt es häufig das Problem, dass bei der Entwicklung der Software diese auf jedem Entwicklersystem komplett eingerichtet sein muss.
+%
+%Da diese Einrichtung aber in der Regel vom jeweiligen Entwickler vorgenommen wird, fällt diese meist auf jedem System leicht anders aus. Auch wenn dies manchmal helfen kann die Software robuster zu gestalten zeigen sich wirkliche Probleme im Zusammenspiel aller Komponenten meist erst bei der Installation eines Releases beim Kunden.
+%
+%%% Mehr Testing (Immer machbar ..., Dauert nicht ewig)
+%%% Testresults für alle einsehbar
+%
+%\subsection{Konkrete Aufgabe während des Praktikums}
+%Wie bereits angedeutet, ist eine inkonsistente Installation ohne jegliche verlässliche Referenz nicht sehr Aussagekräftig. Es ist fraglich ob die Installation der Software beim Kunden erfolgreich sein wird ist und trifft daher meist auf Probleme, die von anderen Dateisystemen über das Vorhandensein von notwendigen Bibliotheken oder einen Programmpfad alle möglichen und unmöglichen Fehler hervorrufen kann.
+%
+%Mögliche Unterschiede sind darüber hinaus auch möglicherweise leicht verschiedene Pfade, Pfadangaben mit und ohne "'/"' oder "'\\"' am Ende oder auch Pfade mit enthaltenen Leerzeichen.
+%
+%% ==> Testing
+%
+%% 2 Teile
+%% problem beschreiben
+%% beispiele aufzeigen
+%
+%Ziel ist es eine Plattform zu schaffen die dabei helfen soll diese Art von Fehlern zu vermindern oder gar zu vermeiden.
+%Diese Plattform soll vorhandene und neue Softwareprojekte selbstständig Bauen, Testen und abschließend auch zum Test deployen können.
+%
+%\subsubsection{Bauen der Software}
+%Als Buildsystem wird \texttt{Maven} in den Projekten benutzt. Dieses Buildsystem ermöglicht das Beschreiben von Vorgängen als XML in \texttt{POMs}\footnote{\textbf{P}roject \textbf{O}bject \textbf{M}odel} ermöglicht. Diese POMs sind zu verstehen als kleine Projekte. Ein Beispiel dafür ist in Abbildung \ref{fig:jenkins_overview} zu sehen. % TODO: Bild der BVIS-Module
+%
+%\subsubsection{Softwaretests}
+%Eine wichtige Phase ist das automatisierte Testen der geschriebenen Software. Hier wird in den meisten Projekten auf Integrationstests gesetzt.
+%Vor allem beim Testen einer Software sollte darauf geachtet werden, dass die Umgebung in der getestet wird möglichst so eingerichtet ist, wie die Umgebung bei der die Software beim Kunden eingesetzt wird.
+%
+%\subsubsection{Deploymenttest der Software}
+%%% TODO: Erklärung: CDI, Dependency-Injection
+%Das Testen des Deployments ist ein entscheidender Schritt in der Sicherstellung, dass eine Software später auch funktionieren wird. Einige Elemente wie die Dependency-Injection über Mechanismen wie CDI oder einige Datenbankanbindungen können mit reinen Integrationstests ausserhalb eines Anwendungs-Servers nicht richtig getestet werden.
+%
+%\section{Beschreibung von Lösungsmöglichkeiten}
+%% Ohne CI => Haufen Shell-Scripts
+%% Automatisiertes Deployment testing
+%
+%Durch die vorhanden Projekte waren fast alle Komponenten schon vorgegeben. Hierzu gehört der Jenkins als Buildserver, da dieser auch von den Kunden eingesetzt wird um das Projekt zu bauen und zu testen. Dazu kommt noch SonarQube, welches auch von Kunden für die Qualitätssicherung des Codes eingesetzt wird und hier der Einsatz des selben Produktes die Erfahrung bringen sollte, dass auf beiden Seiten nach den selben Regeln geprüft wird.
+%
+%Darüber hinaus ist durch verschiedene bestehende Projekte eine Anbindung der Projekte an Datenbanken wie PostgreSQL oder meist MSSQL gegeben.
+%
+%\section{Lösungskonzept \& Realisierungsansatz}
+%Das gewählte Lösungskonzept besteht aus mehreren Elementen:
+%
+%\begin{itemize}
+%	\item Jenkins
+%	\item Docker
+%	\item Datenbank (MSSQL oder PostgreSQL)
+%	\item Tomcat
+%	\item SonarQube
+%\end{itemize}
+%
+%\vspace{20pt}
+%        \begin{figure}[h!] 
+%                \centering
+%                %\includegraphics[width=13cm]{build-ablauf}
+%                \caption{Möglicher Ablauf des Buildprozesses}
+%                \label{fig:build_ablauf}
+%        \end{figure}
+%\vspace{20pt}
+%
+%Im genaueren sieht die Übersicht eines Projektes im Jenkins dann mit einem Beispiel versehen so wie in Abb. \ref{fig:jenkins_overview} aus.
+%
+%\vspace{20pt}
+%        \begin{figure}[h!] 
+%                \centering
+%                %\includegraphics[width=16cm]{jenkins-bvis.png}
+%                \caption{Übersicht eines Jenkins Projektes}
+%                \label{fig:jenkins_overview}
+%        \end{figure}
+%\vspace{20pt}
+%
+%\section{Zusammenfassung, Ausblick und Reflexion}
+%\subsection{Reflexion}
+%\subsection{Kommunikation}
+
+\end{document}
