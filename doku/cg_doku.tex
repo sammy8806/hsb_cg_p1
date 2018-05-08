@@ -168,8 +168,8 @@
 \fancyfoot[R]{\thepage{}} %% \pageref{LastPage}
 %
 %opening
-\title{Documentation of\\Computer Graphics Exercises 1 \& 2}
-\author{Steven Tappert \& Marvin Uwe Marken\\\small{Mat. Nr.: 372838 \& 373116}}
+\title{Documentation of Computer Graphics}
+\author{Steven Tappert \& Marvin Uwe Marken}
 \date{}
 
 \setlength\intextsep{0pt}
@@ -192,7 +192,7 @@
 \newpage
 
 \section{Abstract}
-This documentation shows and explains how the authors completed given tasks "Exercise 1 \& 2" in the course "Computer Graphics". The tasks are done in the IDE "Qt Creator" with C++ as programming language. Main subject is to render 3D objects and subdivide the object faces into smaller faces later.
+This documentation shows and explains how the authors completed the given tasks in the course "Computer Graphics". The tasks are done in the IDE "Qt Creator" with C++ as programming language. Main subject of the first tasks is to render 3D objects and subdivide the object faces into smaller faces later by using the Catmull-Clark Subdivision. After that the next tasks are about calculating Bézier Points to create and render bicubic Bézier surfaces and making a rotational surface out of a Bézier curve.
 
 \section{Quad-Mesh Connectivity}
 
@@ -292,6 +292,14 @@ After the alternative vertices are calculated they will replace the old original
 
 \subsection{Recursive Subdivision}
 At the end all new vertices (face and edge midpoints and alternative vertices) get connected to new sub-faces, overwriting the old faces to restore the mesh connectivity. When the subdivision gets applied multiple times, the object gets more and more smoothed.
+
+\section{Bicubic Bézier Surfaces}
+\begin{equation} \label{eq:bezier_surface}
+        f(s, t) \ = \sum_{i=0}^m \sum_{j=0}^n b_{ij} B_{i}^m(s) B_{j}^n(t)
+\end{equation} 
+\section{Reading Surfaces from File}
+\section{Rotational Sweep Surfaces}
+\section{Scene Design \& Testing}
 
 
 \end{document}
