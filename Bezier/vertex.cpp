@@ -28,7 +28,7 @@ void Vertex::SetValenceCount(int valence){
     this->valence = valence;
 }
 
-Vertex Vertex::operator+(Vertex &b)
+Vertex Vertex::operator+(const Vertex &b)
 {
     Vertex result = Vertex();
     for(int i=0; i < 3; i++) {
@@ -37,7 +37,7 @@ Vertex Vertex::operator+(Vertex &b)
     return result;
 }
 
-Vertex Vertex::operator/(float b)
+Vertex Vertex::operator/(const float b)
 {
     Vertex result = Vertex();
     for(int i=0; i < 3; i++) {
@@ -46,7 +46,7 @@ Vertex Vertex::operator/(float b)
     return result;
 }
 
-Vertex Vertex::operator*(float a)
+Vertex Vertex::operator*(const float a)
 {
     Vertex result = Vertex();
     for(int i=0; i < 3; i++) {
@@ -63,4 +63,13 @@ Vertex operator+=(Vertex a, Vertex b)
 Vertex operator/=(Vertex a, float b)
 {
     return a / b;
+}
+
+float* operator-(Vertex a, Vertex b)
+{
+    float *c = new float[3];
+    for(int i=0; i<3; i++) {
+        c[i] = a.vertexCoord[0] - b.vertexCoord[0];
+    }
+    return c;
 }

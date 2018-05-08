@@ -310,20 +310,19 @@ void OGLWidget::CalculateAllNeighbors(){
 void OGLWidget::CalculateAllFacesMidpoints(){
 
     for(int face = 0; face < this->quads.length(); face++) {
+        Vertex *vertex = new Vertex(0, 0, 0);
 
+<<<<<<< HEAD:Subdivision/oglwidget.cpp
         float faceMidpoint[3] = {0,0,0};
+=======
+>>>>>>> 4d0ccddd9120297c93342cd8321bbec9c18395ae:oglwidget.cpp
         for(int vertexId = 0; vertexId < 4; vertexId++){
-
-            for(int coord = 0; coord < 3; coord++){
-                faceMidpoint[coord] += vertices[this->quads.at(face)->vertexIndex[vertexId]]->vertexCoord[coord] / 4;
-            }
+            *vertex = *vertex + *vertices[ this->quads.at(face)->vertexIndex[vertexId] ] / 4.0f;
         }
-        qDebug() << "Face Midpoint is at " << faceMidpoint[0] << faceMidpoint[1] << faceMidpoint[2] << " for face " << face;
-        Vertex *vertex = new Vertex(faceMidpoint[0], faceMidpoint[1], faceMidpoint[2]);
-        // addVertex(vertex);
-        // this->facepoints.append(vertex);
+
         this->quads.at(face)->faceVertex = vertex;
     }
+
     qDebug() << "Now" << vertices.size() << "vertices overall";
 }
 
