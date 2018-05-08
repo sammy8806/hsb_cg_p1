@@ -19,6 +19,8 @@ public:
     Quad( float[4]);
     Quad(int i, int j, int k, int l);//int - vertex index
     void Print();
+
+    operator std::string() const;
 };
 
 #endif // TRIANGLE_H

@@ -311,7 +311,7 @@ void OGLWidget::CalculateAllFacesMidpoints(){
 
     for(int face = 0; face < this->quads.length(); face++) {
 
-        float faceMidpoint[3];
+        float faceMidpoint[3] = {0,0,0};
         for(int vertexId = 0; vertexId < 4; vertexId++){
 
             for(int coord = 0; coord < 3; coord++){
@@ -417,8 +417,8 @@ void OGLWidget::CalculateAllAlternativeVertices(){
         }
         alternativeVertices.append(newVertex);
 
-        qDebug() << "#stuff";
+        qDebug() << "real vertex dome";
     }
 
-    qDebug() << "#stuff 2";
+    qDebug() << "calc all alternatives done";
 }
