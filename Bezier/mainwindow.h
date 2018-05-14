@@ -1,15 +1,23 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include <assert.h>
 #include <vector>
 #include <string>
 #include <fstream>
-#include <QFile>
 #include <iostream>
+
+#include <QMainWindow>
+#include <QFile>
 #include <QTextStream>
 #include <QDebug>
 #include <QFileDialog>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QJsonObject>
+
+#include "cgpoint.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,6 +32,7 @@ public:
     ~MainWindow();
 
     void readData(QString filename);
+     void writeData();
 
 private slots:
     void on_actionLoad_obj_File_triggered();

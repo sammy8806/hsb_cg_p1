@@ -13,6 +13,8 @@
 #include <QVector>
 #include <math.h>
 
+#include "cgpoint.h"
+
 class OGLWidget : public QOpenGLWidget,
                   protected QOpenGLFunctions
 {
@@ -39,9 +41,7 @@ protected:
     int animstep;      // Current animation step (used to rotate triangle
 
 private:
-
-
-
+    struct CgPoint;
 };
 
 

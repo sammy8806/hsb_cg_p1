@@ -3,9 +3,12 @@
 #include <iostream>
 #include <algorithm> // for std::find
 #include <iterator> // for std::begin, std::end
+#include"mainwindow.h"
 
 #define PI 3.14159265358979323846
 using namespace std;
+
+static double alpha = 45.0;
 
 int maxJ = 12;
 
@@ -18,13 +21,7 @@ float PointsOld[4][3] = {
     {-10,5,-2}
 };
 
-struct Point {
-    float x;
-    float y;
-    float z;
-};
-
-Point Points[4][4] = {
+CgPoint Points[4][4] = {
     {
         { 10,0,10 },
         {  5,0,10 },
@@ -49,7 +46,12 @@ Point Points[4][4] = {
         { -5,0,-10 },
         {-10,0,-10 }
     }
+
 };
+
+
+
+
 
 // the level of detail of the curve
 unsigned int LOD=1000;
@@ -109,10 +111,10 @@ void display(void)
 // with 4 new points. These new points then form a curve we can
 // evaluate in the v direction to calculate our final output point.
 //
-Point CalculateU(float t,int row) {
+CgPoint CalculateU(float t,int row) {
 
     // the final point
-    Point p;
+    CgPoint p;
 
     // the t value inverted
     float it = 1.0f-t;
@@ -149,8 +151,8 @@ Point CalculateU(float t,int row) {
 //     This function takes the temporary points and generates
 // the final point for the rendered surface
 //
-Point CalculateV(float t,Point* pnts) {
-    Point p;
+CgPoint CalculateV(float t, CgPoint* pnts) {
+    CgPoint p;
 
     // the t value inverted
     float it = 1.0f-t;
@@ -186,12 +188,12 @@ Point CalculateV(float t,Point* pnts) {
 // function performs that evaluation by using the specified u
 // and v parametric coordinates.
 //
-Point Calculate(float u,float v) {
+CgPoint Calculate(float u,float v) {
 
     // first of all we will need to evaluate 4 curves in the u
     // direction. The points from those will be stored in this
     // temporary array
-    Point temp[4];
+    CgPoint temp[4];
 
     // calculate each point on our final v curve
     temp[0] = CalculateU(u,0);
@@ -205,6 +207,7 @@ Point Calculate(float u,float v) {
     //
     return CalculateV(v,temp);
 }
+
 
 void OnDraw() {
 
@@ -235,7 +238,7 @@ void OnDraw() {
             float v = (float)j/(LOD-1);
 
             // calculate the point on the surface
-            Point p = Calculate(u,v);
+            CgPoint p = Calculate(u,v);
 
             // draw point
             glVertex3f(p.x,p.y,p.z);
@@ -385,7 +388,8 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
     glLoadIdentity();				// Reset The Current Modelview Matrix
     glTranslated(0, 0 ,-10.0);     // Move 10 units backwards in z, since camera is at origin
     glScaled( 2.0, 2.0, 2.0);       // scale objects
-    // glRotated( alpha, rotateX, rotateY, rotateZ);     // continuous rotation
+    glRotated(alpha, 0, 3, 1);     // continuous rotation
+    alpha += 5;
 
     // define color: 1=front, 2=back, 3=both, followed by r, g, and b
     SetMaterialColor( 1, 1.0, .2, .2);  // front color is red
@@ -400,8 +404,12 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
     glFlush();
 }
 
+
+
 void OGLWidget::resizeGL(int w, int h) // called when window size is changed
 {
     // adjust viewport transform
     glViewport(0,0,w,h);
 }
+
+

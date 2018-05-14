@@ -66,6 +66,7 @@ void MainWindow::on_actionLoad_obj_File_triggered()
 
 void MainWindow::on_pushButton_clicked()
 {
+
     QString fileName = QFileDialog::getOpenFileName(this,
                 tr("Open OBJ File"), "/Users/steven/Nextcloud/hs-bremen/ismi/cg", tr("OBJ Files (*.obj)")
     );

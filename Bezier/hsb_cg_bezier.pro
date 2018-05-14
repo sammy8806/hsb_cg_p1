@@ -14,7 +14,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = cg_p1
 TEMPLATE = app
-
+CONFIG += c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -23,6 +23,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     oglwidget.h \
-    vertex.h
+    vertex.h \
+    cgpoint.h
 
 FORMS    += mainwindow.ui
