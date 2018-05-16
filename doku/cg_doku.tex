@@ -115,11 +115,8 @@
 
 
 %% Windows / Linux
-\newfontfamily\bodyfont[]{HelveticaNeue}
-\newfontfamily\thinfont[]{HelveticaNeue Thin}
-\newfontfamily\headingfont[]{HelveticaNeue BlackCond}
-\defaultfontfeatures{Mapping=tex-text}
-\setmainfont[Mapping=tex-text, Color=textcolor]{HelveticaNeue Light}
+
+
 
 
 %% OSX
@@ -169,8 +166,8 @@
 %
 %opening
 \title{Documentation of Computer Graphics}
-\author{Steven Tappert \& Marvin Uwe Marken}
-\date{}
+\author{Steven Tappert \& Marvin Uwe Marken \& Laura Mahlberg}
+\date{May 15, 2018} 
 
 \setlength\intextsep{0pt}
 \setlength{\parindent}{0pt} 
@@ -293,12 +290,52 @@ After the alternative vertices are calculated they will replace the old original
 \subsection{Recursive Subdivision}
 At the end all new vertices (face and edge midpoints and alternative vertices) get connected to new sub-faces, overwriting the old faces to restore the mesh connectivity. When the subdivision gets applied multiple times, the object gets more and more smoothed.
 
-\section{Bicubic Bézier Surfaces}
-\begin{equation} \label{eq:bezier_surface}
+\newpage 
+
+\section{Bézier Surface}
+\subsection{Bicubic Bézier Surfaces}
+
+Aside from the complex calculations there is not much more to it to construct a well-functioned Bezier surface. The surface is fundamentally a sum of Bezier curves. The calculation for this is to be found as part of assignment number five. To imagine a data structure which is able to organize every coordinate in a consistent and accessible way is challenging, and requires multidimensional arrays.
+\begin{equation} 
+\label{eq:bezier_surface}
         f(s, t) \ = \sum_{i=0}^m \sum_{j=0}^n b_{ij} B_{i}^m(s) B_{j}^n(t)
 \end{equation} 
-\section{Reading Surfaces from File}
+
+\subsection{Reading Surfaces from File}
+To read and sketch a Bezier curve it was necessary to use a file format which is designed to do so. It was provided to create a JSON document where the coordinates can be read out for the development environment QT since QT shows a own library to create and process JSON documents.
+\\
+\begin {lstlisting}
+if(firstChar == "{") {
+        in.seek(0);
+     Read frome JSON Dokument 
+     Put JSON Values in Array 
+
+             for(QJsonValue sliceVal : slice) {
+                Read points out of Dokument 
+        translate it into Array
+
+                   static_cast<float>(pointObj["x"].toDouble()),
+                   static_cast<float>(pointObj["y"].toDouble()),
+                   static_cast<float>(pointObj["z"].toDouble())
+               };
+
+ 
+             
+           }else {
+        could not read file;
+
+}
+
+\end{lstlisting}
+
 \section{Rotational Sweep Surfaces}
+\subsection {Rotational Sweep Surfaces}
+
+The coefficients mentioned in the pseudo codes are in fact Bernstein polynomials. Knowing them allows to calculate any value on the curve from the start point till the end. For that the variable is given t [0,1], 0 being the start point and 1 the end. By dividing the current step by the total amount of steps one can compute the actual t.
+
+
+\subsection {Rotational Sweep Surfaces b.}
+
 \section{Scene Design \& Testing}
 
 
