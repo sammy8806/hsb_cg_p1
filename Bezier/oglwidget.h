@@ -11,6 +11,8 @@
 #include <QTimer>
 #include <QDebug>
 #include <QVector>
+#include <QVector2D>
+#include <QVector3D>
 #include <math.h>
 
 class OGLWidget : public QOpenGLWidget,
@@ -33,6 +35,7 @@ protected:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
+    void loadData();
 
 protected:
     QTimer* animtimer; // Timer needed to step animation every x msec

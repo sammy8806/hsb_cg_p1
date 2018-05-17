@@ -4,11 +4,15 @@
 #include <algorithm> // for std::find
 #include <iterator> // for std::begin, std::end
 
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QString>
+
 #define PI 3.14159265358979323846
 using namespace std;
 
-int maxJ = 12;
-
+int maxJ = 4;
+float alpha = 0.0f;
 
 // 4 control points for our cubic bezier curve
 float PointsOld[4][3] = {
@@ -24,35 +28,35 @@ struct Point {
     float z;
 };
 
-Point Points[4][4] = {
-    {
-        { 10,0,10 },
-        {  5,0,10 },
-        { -5,0,10 },
-        {-10,0,10 }
-    },
-    {
-        { 10,0,5 },
-        {  5,6,5 },
-        { -5,6,5 },
-        {-10,0,5 }
-    },
-    {
-        { 10,0,-5 },
-        {  5,6,-5 },
-        { -5,6,-5 },
-        {-10,0,-5 }
-    },
-    {
-        { 10,0,-10 },
-        {  5,0,-10 },
-        { -5,0,-10 },
-        {-10,0,-10 }
-    }
-};
+    Point Points[4][4] = {
+        {
+            { 10,0,10 },
+            {  5,0,10 },
+            { -5,0,10 },
+            {-10,0,10 }
+        },
+        {
+            { 10,0,5 },
+            {  5,6,5 },
+            { -5,6,5 },
+            {-10,0,5 }
+        },
+        {
+            { 10,0,-5 },
+            {  5,6,-5 },
+            { -5,6,-5 },
+            {-10,0,-5 }
+        },
+        {
+            { 10,0,-10 },
+            {  5,0,-10 },
+            { -5,0,-10 },
+            {-10,0,-10 }
+        }
+    };
 
 // the level of detail of the curve
-unsigned int LOD=1000;
+unsigned int LOD=35;
 
 
 GLfloat ctrlpoints[4][4][3] = {
@@ -112,32 +116,25 @@ void display(void)
 Point CalculateU(float t,int row) {
 
     // the final point
-    Point p;
+    Point p = {0, 0, 0};
 
     // the t value inverted
     float it = 1.0f-t;
 
-    // calculate blending functions
-    float b0 = t*t*t;
-    float b1 = 3*t*t*it;
-    float b2 = 3*t*it*it;
-    float b3 =  it*it*it;
+    // Berstein polynomes
+    float bernstein[4] = {
+        t*t*t,
+        3*t*t*it,
+        3*t*it*it,
+        it*it*it
+    };
 
     // sum the effects of the Points and their respective blending functions
-    p.x = b0*Points[row][0].x +
-          b1*Points[row][1].x +
-          b2*Points[row][2].x +
-          b3*Points[row][3].x ;
-
-    p.y = b0*Points[row][0].y +
-          b1*Points[row][1].y +
-          b2*Points[row][2].y +
-          b3*Points[row][3].y ;
-
-    p.z = b0*Points[row][0].z +
-          b1*Points[row][1].z +
-          b2*Points[row][2].z +
-          b3*Points[row][3].z ;
+    for (int i = 0; i < 4; i++) {
+        p.x += bernstein[i] * Points[row][i].x;
+        p.y += bernstein[i] * Points[row][i].y;
+        p.z += bernstein[i] * Points[row][i].z;
+    }
 
     return p;
 }
@@ -150,32 +147,25 @@ Point CalculateU(float t,int row) {
 // the final point for the rendered surface
 //
 Point CalculateV(float t,Point* pnts) {
-    Point p;
+    Point p = {0, 0, 0};
 
     // the t value inverted
     float it = 1.0f-t;
 
-    // calculate blending functions
-    float b0 = t*t*t;
-    float b1 = 3*t*t*it;
-    float b2 = 3*t*it*it;
-    float b3 =  it*it*it;
+    // Berstein polynomes
+    float bernstein[4] = {
+        t*t*t,
+        3*t*t*it,
+        3*t*it*it,
+        it*it*it
+    };
 
     // sum the effects of the Points and their respective blending functions
-    p.x = b0*pnts[0].x +
-          b1*pnts[1].x +
-          b2*pnts[2].x +
-          b3*pnts[3].x ;
-
-    p.y = b0*pnts[0].y +
-          b1*pnts[1].y +
-          b2*pnts[2].y +
-          b3*pnts[3].y ;
-
-    p.z = b0*pnts[0].z +
-          b1*pnts[1].z +
-          b2*pnts[2].z +
-          b3*pnts[3].z ;
+    for (unsigned long i = 0; i <= sizeof(*pnts)/sizeof(float); i++) {
+        p.x += bernstein[i] * pnts[i].x;
+        p.y += bernstein[i] * pnts[i].y;
+        p.z += bernstein[i] * pnts[i].z;
+    }
 
     return p;
 }
@@ -209,7 +199,7 @@ Point Calculate(float u,float v) {
 void OnDraw() {
 
     // clear the screen & depth buffer
-    glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
+    // glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
 
     // clear the previous transform
     glLoadIdentity();
@@ -218,6 +208,9 @@ void OnDraw() {
     /* gluLookAt(	5,16,20,	//	eye pos
                 0,0,0,	//	aim point
                 0,1,0);	//	up direction */
+
+    glRotated( alpha, 0, 3, 1);     // continuous rotation
+    alpha += 5;
 
     glColor3f(1,0,1);
     glPointSize(2);
@@ -279,8 +272,6 @@ void InitLightingAndProjection() // to be executed once before drawing
     glLoadIdentity(); // reset matrix to identity (otherwise existing matrix will be multiplied with)
     glOrtho( -15, 15, -10, 10, -60, 60); // orthogonal projection (xmin xmax ymin ymax zmin zmax)
     // glFrustum( -10, 10, -8, 8, 2, 20); // perspective projektion
-
-    // init();
 }
 
 // define material color properties for front and back side
@@ -345,33 +336,6 @@ void OGLWidget::initializeGL() // initializations to be called once
     InitLightingAndProjection(); // define light sources and projection
 }
 
-void stuff() {
-    GLfloat grid2x2[2][2][3] = {
-      {{-2.0, -2.0, 0.0}, {4.0, -2.0, 0.0}},
-      {{-2.0, 3.0, 0.0}, {3.0, 4.0, 0.0}}
-    };
-
-    glEnable(GL_MAP2_VERTEX_3);
-     glMap2f(GL_MAP2_VERTEX_3,
-       0.0, 1.0,  /* U ranges 0..1 */
-       3,         /* U stride, 3 floats per coord */
-       2,         /* U is 2nd order, ie. linear */
-       0.0, 1.0,  /* V ranges 0..1 */
-       2 * 3,     /* V stride, row is 2 coords, 3 floats per coord */
-       2,         /* V is 2nd order, ie linear */
-       &(grid2x2[0][0][0]));  /* control points */
-
-     glMapGrid2f(
-       5, 0.0, 1.0,
-       6, 0.0, 1.0);
-
-     glEvalMesh2(GL_LINE,
-       0, 5,   /* Starting at 0 mesh 5 steps (rows). */
-       0, 6);  /* Starting at 0 mesh 6 steps (columns). */
-
-     glEnable(GL_FILL);
-}
-
 void OGLWidget::paintGL() // draw everything, to be called repeatedly
 {
     glEnable(GL_NORMALIZE); // this is necessary when using glScale (keep normals to unit length)
@@ -385,7 +349,6 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
     glLoadIdentity();				// Reset The Current Modelview Matrix
     glTranslated(0, 0 ,-10.0);     // Move 10 units backwards in z, since camera is at origin
     glScaled( 2.0, 2.0, 2.0);       // scale objects
-    // glRotated( alpha, rotateX, rotateY, rotateZ);     // continuous rotation
 
     // define color: 1=front, 2=back, 3=both, followed by r, g, and b
     SetMaterialColor( 1, 1.0, .2, .2);  // front color is red
@@ -398,6 +361,26 @@ void OGLWidget::paintGL() // draw everything, to be called repeatedly
 
     // make it appear (before this, it's hidden in the rear buffer)
     glFlush();
+}
+
+void OGLWidget::loadData()
+{
+    QVector<QVector2D> rotate_points;
+    rotate_points.push_back(QVector2D(0, 0));
+    rotate_points.push_back(QVector2D(3, 2));
+    rotate_points.push_back(QVector2D(4, -1));
+    rotate_points.push_back(QVector2D(7, 1));
+
+    // https://gamedev.stackexchange.com/a/9610
+    //
+    // 3+(2*cos(45)) = 4,0506439776
+    // 2+(2*sin(45)) = 3,7018070491
+
+    int rings = 4;
+    QVector<QVector2D> bezierCurve;
+
+
+
 }
 
 void OGLWidget::resizeGL(int w, int h) // called when window size is changed
